@@ -28,9 +28,18 @@ hide_active_client = false
 click_activates    = true
 snap               = 0          # snap dragging to an N-pixel grid, 0 = off
 
-# Unmanaged windows. Leave false on KDE: managed windows honour "keep above"
-# and behave better. Try true only if previews misbehave on another compositor.
-override_redirect  = false
+# Draw previews as unmanaged (override-redirect) windows.
+#
+# Keep this true. EVE in Fixed Window mode still covers the whole monitor, and
+# Wine therefore tags the window _NET_WM_STATE_FULLSCREEN. KWin places the
+# active fullscreen window in its ActiveLayer, which sits *above* the
+# AboveLayer used by "keep above" - so an ordinary always-on-top window is
+# correctly drawn behind the client you are playing. Unmanaged windows are not
+# in that layer system at all and stay visible.
+#
+# Set false only if you run EVE in a window smaller than the monitor, or on a
+# compositor where unmanaged windows misbehave.
+override_redirect  = true
 
 # --- which windows are clients ---------------------------------------------
 # EVE titles its windows "EVE - <character name>".

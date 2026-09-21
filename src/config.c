@@ -63,7 +63,7 @@ void config_defaults(Config *c)
     c->show_label      = true;
     c->label_scale     = 1;
     c->opacity         = 1.0;
-    c->override_redirect = false;
+    c->override_redirect = true;   /* see eveo.conf.example for why */
     c->snap            = 0;
     c->click_activates = true;
     snprintf(c->match_prefix, sizeof c->match_prefix, "EVE - ");

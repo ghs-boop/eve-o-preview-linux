@@ -113,8 +113,12 @@ static void set_name_from_title(Client *c, const char *title)
 {
     snprintf(c->title, TITLE_LEN, "%s", title);
     size_t pl = strlen(cfg.match_prefix);
-    snprintf(c->name, NAME_LEN, "%s",
-             strlen(title) > pl ? title + pl : title);
+    const char *rest = strlen(title) > pl ? title + pl : title;
+    /* Config files get their trailing whitespace trimmed, so match_prefix may
+     * arrive as "EVE -" rather than "EVE - ". Character names always begin
+     * with an alphanumeric, so drop any separator left at the front. */
+    while (*rest == ' ' || *rest == '\t' || *rest == '-') rest++;
+    snprintf(c->name, NAME_LEN, "%s", rest);
 }
 
 static void client_add(xcb_window_t w, const char *title)

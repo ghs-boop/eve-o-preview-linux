@@ -23,8 +23,22 @@ So with clients in fullscreen, at most one client is ever capturable (the
 focused one), and the instant you look at something else, every preview dies.
 
 **Set every client to windowed mode.** In game: `Esc` → `Display & Graphics` →
-`Display Mode` → **Fixed Window** (or Windowed). Then the clients stay mapped
-when unfocused, previews stay live, and previews can float above them.
+`Display Mode` → **Fixed Window** (or Windowed). The clients then stay mapped
+when they lose focus, and previews stay live.
+
+### ...and why previews end up *behind* the client
+
+Fixed Window still covers the whole monitor, so Wine tags the window
+`_NET_WM_STATE_FULLSCREEN` anyway. KWin puts the *active* fullscreen window in
+its `ActiveLayer`, which sits above the `AboveLayer` that "keep above" windows
+live in. An ordinary always-on-top preview is therefore correctly drawn behind
+the client you are playing — so clicking a preview looks like it makes all the
+previews disappear.
+
+eveo draws previews as **unmanaged (override-redirect) windows** by default.
+Those are outside that layer system entirely and stay visible above the active
+client. If you run EVE in a window genuinely smaller than the monitor you can
+set `override_redirect = false` to get normal managed windows instead.
 
 You can check what eveo sees at any time:
 
@@ -128,9 +142,11 @@ hand-written config is never clobbered.
 * Scaling is done by **XRender** directly into an offscreen buffer, so the
   3440×1440 source is scaled on the GPU and never crosses the X socket. Cost is
   a few hundred microseconds per preview per frame regardless of source size.
-* Previews are undecorated, `_NET_WM_STATE_ABOVE`, skip-taskbar, on all
-  desktops, and carry `WM_HINTS` with `input = False` so that clicking one can
-  never steal keyboard focus from the game.
+* Previews are undecorated and unmanaged (override-redirect) by default, so no
+  compositor layer policy can push them behind a fullscreen client. In managed
+  mode they are instead `_NET_WM_STATE_ABOVE`, skip-taskbar, on all desktops,
+  and carry `WM_HINTS` with `input = False`, so clicking one can never steal
+  keyboard focus from the game.
 * Switching sends `_NET_ACTIVE_WINDOW` with source indication `2` ("pager"),
   which is what lets KWin bypass focus-stealing prevention and also restores a
   minimised client.
@@ -157,8 +173,11 @@ depending on the X font path would make labels fail on a default install.
 
 ## Limitations
 
-* A client in fullscreen mode cannot be previewed (see above) and nothing can
-  float above it. Use windowed mode.
+* A client left in true fullscreen mode minimises itself when it loses focus
+  and cannot be previewed at all (see above). Use Fixed Window.
+* Because previews are unmanaged they float above *everything*, including other
+  fullscreen applications, and they ignore virtual desktops. Set
+  `override_redirect = false`, or stop eveo, if that gets in the way.
 * Previews show a `minimised` placeholder rather than a stale frame — X11
   discards the contents of unmapped windows, so a last-known frame isn't
   available to show.
