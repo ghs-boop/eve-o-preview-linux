@@ -1,0 +1,14 @@
+[Unit]
+Description=EVE Online client previews
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/eveo
+ExecReload=/usr/local/bin/eveo reload
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=graphical-session.target

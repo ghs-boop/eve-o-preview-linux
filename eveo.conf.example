@@ -1,0 +1,40 @@
+# eveo configuration - copy to ~/.config/eve-o-preview/eveo.conf
+#
+# Every setting is optional; the values shown here are the defaults.
+# Run `eveo reload` after editing to apply changes without restarting.
+
+# --- preview size -----------------------------------------------------------
+thumbnail_width    = 320
+thumbnail_height   = 180
+
+# Capture rate. Previews are for situational awareness, not for playing from,
+# so a low rate is usually better: it costs less GPU and looks no worse.
+fps                = 10
+
+# --- appearance -------------------------------------------------------------
+border             = 2
+color_active       = ff5c1a
+color_inactive     = 303840
+color_background   = 101418
+
+show_label         = true
+label_scale        = 1          # 2 for a larger, more readable name
+opacity            = 1.0        # 0.1 - 1.0
+
+# Hide the preview belonging to the client you are currently playing.
+hide_active_client = false
+
+# --- behaviour --------------------------------------------------------------
+click_activates    = true
+snap               = 0          # snap dragging to an N-pixel grid, 0 = off
+
+# Unmanaged windows. Leave false on KDE: managed windows honour "keep above"
+# and behave better. Try true only if previews misbehave on another compositor.
+override_redirect  = false
+
+# --- which windows are clients ---------------------------------------------
+# EVE titles its windows "EVE - <character name>".
+match_prefix       = EVE -
+
+# Substring match; repeat the key to ignore more windows.
+ignore             = EVE Online Launcher
